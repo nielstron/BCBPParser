@@ -25,15 +25,3 @@ if (parsed != null) {
     String summary = parsed.summary();
 }
 ```
-
-## CI and Releases
-
-- `CI` workflow runs tests on pushes and pull requests.
-- `Release` workflow runs when a tag matching `v*` is pushed, builds the project, and attaches jars from `build/libs/*.jar` to a GitHub Release.
-
-Example release:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
