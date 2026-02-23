@@ -18,6 +18,33 @@ Artifacts are generated in `build/libs/`:
 - `bcbp-parser-<version>-sources.jar`
 - `bcbp-parser-<version>-javadoc.jar`
 
+## GitHub Packages
+
+On tag pushes like `v0.0.1`, CI publishes this library to GitHub Packages:
+- `de.nielstron:bcbp-parser:<version>`
+
+To consume it in Gradle:
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/nielstron/BCBPParser")
+        credentials {
+            username = providers.gradleProperty("gpr.user")
+                .orElse(System.getenv("GITHUB_ACTOR"))
+                .get()
+            password = providers.gradleProperty("gpr.key")
+                .orElse(System.getenv("GITHUB_TOKEN"))
+                .get()
+        }
+    }
+}
+
+dependencies {
+    implementation("de.nielstron:bcbp-parser:0.0.1")
+}
+```
+
 ## Usage
 
 ```java
