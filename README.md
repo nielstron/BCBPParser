@@ -1,4 +1,4 @@
-# bcbp-parser
+# BCBPParser
 
 Standalone Java parser for IATA Bar Coded Boarding Pass (BCBP) payloads.
 
