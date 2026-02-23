@@ -1,4 +1,7 @@
 # BCBPParser
+[![JitPack](https://jitpack.io/v/nielstron/BCBPParser.svg)](https://jitpack.io/#nielstron/BCBPParser)
+[![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-available-181717?logo=github)](https://github.com/nielstron/BCBPParser/packages)
+
 Parser for IATA Bar Coded Boarding Pass (BCBP) payloads, written in Java.
 
 ## Usage
@@ -55,18 +58,45 @@ if (pass != null && pass.getSecurityData() != null) {
 
 - Symbology prefixes like `]Q3` are accepted.
 
+## Dependency
+
+### JitPack
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.nielstron:bcbp-parser:<version>")
+}
+```
+
+### GitHub Packages
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://maven.pkg.github.com/nielstron/BCBPParser") {
+        credentials {
+            username = providers.gradleProperty("gpr.user").orNull
+            password = providers.gradleProperty("gpr.token").orNull
+        }
+    }
+}
+
+dependencies {
+    implementation("de.nielstron:bcbp-parser:<version>")
+}
+```
+
 ## Build
 
 ```bash
 ./gradlew test
 ./gradlew build
 ```
-
-Artifacts are generated in `build/libs/`:
-- `bcbp-parser-<version>.jar`
-- `bcbp-parser-<version>-sources.jar`
-- `bcbp-parser-<version>-javadoc.jar`
-
 
 ## Acknowledgements
 

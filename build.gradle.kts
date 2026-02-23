@@ -33,6 +33,12 @@ tasks.javadoc {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
 }
 
+tasks.register("jitpackPublish") {
+    group = "publishing"
+    description = "Builds artifacts and publishes to Maven local for JitPack-style consumption."
+    dependsOn("clean", "build", "publishToMavenLocal")
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
