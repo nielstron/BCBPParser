@@ -8,11 +8,6 @@ import de.nielstron.bcbp.IataBcbp;
 
 String raw = "M1DESMARAIS/LUC       EABC123 YULFRAAC 0834 226F001A0025 106>60000";
 
-// Quick payload validity check before deeper processing.
-if (IataBcbp.parse(raw) == null) {
-    return;
-}
-
 // parse(...) returns null for invalid/non-BCBP payloads.
 IataBcbp.Parsed pass = IataBcbp.parse(raw);
 if (pass == null) {
