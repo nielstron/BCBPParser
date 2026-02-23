@@ -2,6 +2,10 @@
 
 Standalone Java parser for IATA Bar Coded Boarding Pass (BCBP) payloads.
 
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).
+
 ## Build
 
 ```bash
@@ -87,3 +91,12 @@ if (pass != null && pass.getSecurityData() != null) {
 ### Notes
 
 - Symbology prefixes like `]Q3` are accepted.
+
+## Acknowledgements
+
+This parser was implemented by translating and adapting ideas and behavior from prior open-source work, especially:
+
+- [anomaddev/BoardingPassKit](https://github.com/anomaddev/BoardingPassKit)
+- [georgesmith46/bcbp](https://github.com/georgesmith46/bcbp)
+
+Those projects were used as references for decoding structure, field handling, and sample behavior during this implementation.
