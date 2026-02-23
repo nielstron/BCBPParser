@@ -1,35 +1,7 @@
 # BCBPParser
-
-Standalone Java parser for IATA Bar Coded Boarding Pass (BCBP) payloads.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](./LICENSE).
-
-## Build
-
-```bash
-./gradlew test
-./gradlew build
-```
-
-Artifacts are generated in `build/libs/`:
-- `bcbp-parser-<version>.jar`
-- `bcbp-parser-<version>-sources.jar`
-- `bcbp-parser-<version>-javadoc.jar`
+Parser for IATA Bar Coded Boarding Pass (BCBP) payloads, written in Java.
 
 ## Usage
-
-```java
-import de.nielstron.bcbp.IataBcbp;
-
-IataBcbp.Parsed parsed = IataBcbp.parse(raw);
-if (parsed != null) {
-    String summary = parsed.summary();
-}
-```
-
-### Quick Start
 
 ```java
 import de.nielstron.bcbp.IataBcbp;
@@ -87,6 +59,19 @@ if (pass != null && pass.getSecurityData() != null) {
 ### Notes
 
 - Symbology prefixes like `]Q3` are accepted.
+
+## Build
+
+```bash
+./gradlew test
+./gradlew build
+```
+
+Artifacts are generated in `build/libs/`:
+- `bcbp-parser-<version>.jar`
+- `bcbp-parser-<version>-sources.jar`
+- `bcbp-parser-<version>-javadoc.jar`
+
 
 ## Acknowledgements
 
