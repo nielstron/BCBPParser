@@ -18,33 +18,6 @@ Artifacts are generated in `build/libs/`:
 - `bcbp-parser-<version>-sources.jar`
 - `bcbp-parser-<version>-javadoc.jar`
 
-## GitHub Packages
-
-On tag pushes like `v0.0.1`, CI publishes this library to GitHub Packages:
-- `de.nielstron:bcbp-parser:<version>`
-
-To consume it in Gradle:
-
-```kotlin
-repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/nielstron/BCBPParser")
-        credentials {
-            username = providers.gradleProperty("gpr.user")
-                .orElse(System.getenv("GITHUB_ACTOR"))
-                .get()
-            password = providers.gradleProperty("gpr.key")
-                .orElse(System.getenv("GITHUB_TOKEN"))
-                .get()
-        }
-    }
-}
-
-dependencies {
-    implementation("de.nielstron:bcbp-parser:0.0.1")
-}
-```
-
 ## Usage
 
 ```java
@@ -63,15 +36,18 @@ import de.nielstron.bcbp.IataBcbp;
 
 String raw = "M1DESMARAIS/LUC       EABC123 YULFRAAC 0834 226F001A0025 106>60000";
 
-if (!IataBcbp.isBcbp(raw)) {
+// Quick payload validity check before deeper processing.
+if (IataBcbp.parse(raw) == null) {
     return;
 }
 
+// parse(...) returns null for invalid/non-BCBP payloads.
 IataBcbp.Parsed pass = IataBcbp.parse(raw);
 if (pass == null) {
     return;
 }
 
+// First-leg convenience accessors for single-leg UX.
 System.out.println(pass.getPassengerName()); // Luc Desmarais
 System.out.println(pass.flightCode());       // AC834
 System.out.println(pass.getFromAirport());   // YUL
@@ -79,13 +55,6 @@ System.out.println(pass.getToAirport());     // FRA
 System.out.println(pass.getSeat());          // 1A
 System.out.println(pass.summary());          // YUL->FRA | AC834 | Seat 1A
 ```
-
-### Common Parsing Pattern
-
-- Use `isBcbp(...)` for a quick payload validity check.
-- Use `parse(...)` and handle `null` for invalid/non-BCBP payloads.
-- Use first-leg convenience accessors (`getFromAirport`, `getToAirport`, `flightCode`, `getSeat`) for single-leg UX.
-- Iterate `getLegs()` for multi-leg itineraries.
 
 ### Multi-Leg Data
 

@@ -16,7 +16,7 @@ class ReadmeUsageTest {
 
     @Test
     void quickStartExampleProducesDocumentedValues() {
-        assertTrue(IataBcbp.isBcbp(BASIC_BCBP));
+        assertTrue(IataBcbp.parse(BASIC_BCBP) != null);
 
         IataBcbp.Parsed pass = IataBcbp.parse(BASIC_BCBP);
         assertNotNull(pass);

@@ -20,10 +20,6 @@ public final class IataBcbp {
     private IataBcbp() {
     }
 
-    public static boolean isBcbp(String rawMessage) {
-        return parse(rawMessage) != null;
-    }
-
     public static Parsed parse(String rawMessage) {
         if (rawMessage == null) {
             return null;

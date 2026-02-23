@@ -17,19 +17,19 @@ class IataBcbpTest {
 
     @Test
     void recognizesValidBcbpPayloads() {
-        assertTrue(IataBcbp.isBcbp(BASIC_BCBP));
+        assertTrue(IataBcbp.parse(BASIC_BCBP) != null);
     }
 
     @Test
     void recognizesBcbpWithSymbologyPrefix() {
-        assertTrue(IataBcbp.isBcbp("]Q3" + BASIC_BCBP));
+        assertTrue(IataBcbp.parse("]Q3" + BASIC_BCBP) != null);
     }
 
     @Test
     void rejectsClearlyInvalidPayloads() {
-        assertFalse(IataBcbp.isBcbp("M1short"));
-        assertFalse(IataBcbp.isBcbp("M1Doe/John            E" + "X".repeat(40)));
-        assertFalse(IataBcbp.isBcbp("Q1DOE/JOHN            E" + "X".repeat(40)));
+        assertFalse(IataBcbp.parse("M1short") != null);
+        assertFalse(IataBcbp.parse("M1Doe/John            E" + "X".repeat(40)) != null);
+        assertFalse(IataBcbp.parse("Q1DOE/JOHN            E" + "X".repeat(40)) != null);
     }
 
     @Test
@@ -69,7 +69,7 @@ class IataBcbpTest {
     void recognizesBcbpWithMeaningfulTrailingSpaces() {
         IataBcbp.Parsed parsed = IataBcbp.parse(LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES);
         assertNotNull(parsed);
-        assertTrue(IataBcbp.isBcbp(LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES));
+        assertTrue(IataBcbp.parse(LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES) != null);
         assertEquals("Niels Mundler", parsed.getPassengerName());
         assertEquals("ZRH", parsed.getFromAirport());
         assertEquals("HAM", parsed.getToAirport());
