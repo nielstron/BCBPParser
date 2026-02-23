@@ -1,15 +1,11 @@
 package de.nielstron.bcbp;
 
-import com.google.zxing.BarcodeFormat;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,26 +15,17 @@ public final class IataBcbp {
     private static final int HEADER_LENGTH = 23;
     private static final int LEG_MANDATORY_LENGTH = 37;
 
-    private static final Set<BarcodeFormat> SUPPORTED_FORMATS = Collections.unmodifiableSet(
-        new HashSet<>(List.of(
-            BarcodeFormat.AZTEC,
-            BarcodeFormat.PDF_417,
-            BarcodeFormat.QR_CODE,
-            BarcodeFormat.DATA_MATRIX
-        ))
-    );
-
     private static final Pattern NUMBER_WITH_SUFFIX_PATTERN = Pattern.compile("^(0*)(\\d+)([A-Z]?)$");
 
     private IataBcbp() {
     }
 
-    public static boolean isBcbp(BarcodeFormat format, String rawMessage) {
-        return parse(format, rawMessage) != null;
+    public static boolean isBcbp(String rawMessage) {
+        return parse(rawMessage) != null;
     }
 
-    public static Parsed parse(BarcodeFormat format, String rawMessage) {
-        if (format == null || rawMessage == null || !SUPPORTED_FORMATS.contains(format)) {
+    public static Parsed parse(String rawMessage) {
+        if (rawMessage == null) {
             return null;
         }
 

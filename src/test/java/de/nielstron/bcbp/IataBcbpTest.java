@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.zxing.BarcodeFormat;
 import org.junit.jupiter.api.Test;
 
 class IataBcbpTest {
@@ -17,33 +16,25 @@ class IataBcbpTest {
         "M1MUNDLER/NIELS       EX4TE6N ZRHHAMLX 1056 049Y030F0117 377>8320 W    BLX                                        2A72463496679170 LX LH 992221992624215     Y*30600000K09  LHS    ";
 
     @Test
-    void recognizesBcbpInSupportedFormats() {
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.AZTEC, BASIC_BCBP));
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.PDF_417, BASIC_BCBP));
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.QR_CODE, BASIC_BCBP));
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.DATA_MATRIX, BASIC_BCBP));
+    void recognizesValidBcbpPayloads() {
+        assertTrue(IataBcbp.isBcbp(BASIC_BCBP));
     }
 
     @Test
     void recognizesBcbpWithSymbologyPrefix() {
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.QR_CODE, "]Q3" + BASIC_BCBP));
-    }
-
-    @Test
-    void rejectsUnsupportedFormats() {
-        assertFalse(IataBcbp.isBcbp(BarcodeFormat.CODE_128, BASIC_BCBP));
+        assertTrue(IataBcbp.isBcbp("]Q3" + BASIC_BCBP));
     }
 
     @Test
     void rejectsClearlyInvalidPayloads() {
-        assertFalse(IataBcbp.isBcbp(BarcodeFormat.AZTEC, "M1short"));
-        assertFalse(IataBcbp.isBcbp(BarcodeFormat.AZTEC, "M1Doe/John            E" + "X".repeat(40)));
-        assertFalse(IataBcbp.isBcbp(BarcodeFormat.AZTEC, "Q1DOE/JOHN            E" + "X".repeat(40)));
+        assertFalse(IataBcbp.isBcbp("M1short"));
+        assertFalse(IataBcbp.isBcbp("M1Doe/John            E" + "X".repeat(40)));
+        assertFalse(IataBcbp.isBcbp("Q1DOE/JOHN            E" + "X".repeat(40)));
     }
 
     @Test
     void extractsRelevantData() {
-        IataBcbp.Parsed parsed = IataBcbp.parse(BarcodeFormat.AZTEC, BASIC_BCBP);
+        IataBcbp.Parsed parsed = IataBcbp.parse(BASIC_BCBP);
         assertNotNull(parsed);
         assertEquals("Luc Desmarais", parsed.getPassengerName());
         assertEquals("YUL", parsed.getFromAirport());
@@ -59,7 +50,7 @@ class IataBcbpTest {
 
     @Test
     void parsesMultiLegAndSecurityData() {
-        IataBcbp.Parsed parsed = IataBcbp.parse(BarcodeFormat.PDF_417, MULTI_LEG_WITH_SECURITY_BCBP);
+        IataBcbp.Parsed parsed = IataBcbp.parse(MULTI_LEG_WITH_SECURITY_BCBP);
         assertNotNull(parsed);
         assertEquals(2, parsed.getNumberOfLegs());
         assertEquals("Luc Desmarais", parsed.getPassengerName());
@@ -76,9 +67,9 @@ class IataBcbpTest {
 
     @Test
     void recognizesBcbpWithMeaningfulTrailingSpaces() {
-        IataBcbp.Parsed parsed = IataBcbp.parse(BarcodeFormat.AZTEC, LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES);
+        IataBcbp.Parsed parsed = IataBcbp.parse(LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES);
         assertNotNull(parsed);
-        assertTrue(IataBcbp.isBcbp(BarcodeFormat.AZTEC, LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES));
+        assertTrue(IataBcbp.isBcbp(LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES));
         assertEquals("Niels Mundler", parsed.getPassengerName());
         assertEquals("ZRH", parsed.getFromAirport());
         assertEquals("HAM", parsed.getToAirport());

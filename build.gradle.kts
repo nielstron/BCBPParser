@@ -19,7 +19,6 @@ repositories {
 }
 
 dependencies {
-    api("com.google.zxing:core:3.3.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
