@@ -26,15 +26,6 @@ if (parsed != null) {
 }
 ```
 
-## Consume From FossWallet (local dev)
-
-Use Gradle composite build in FossWallet:
-
-```kotlin
-includeBuild("../BCBPParser")
-implementation("de.nielstron:bcbp-parser:0.1.0-SNAPSHOT")
-```
-
 ## CI and Releases
 
 - `CI` workflow runs tests on pushes and pull requests.
