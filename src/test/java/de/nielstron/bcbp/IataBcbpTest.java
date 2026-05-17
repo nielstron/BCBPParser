@@ -68,7 +68,8 @@ class IataBcbpTest {
         assertTrue(parsed.getSecurityData().getData().length() > 40);
         assertEquals("0014123456003", parsed.getUniqueConditional().getBagTagNumbers().get(0));
         assertEquals("0141234567890", parsed.getElectronicTicketNumber());
-        assertEquals("0140987654321", parsed.getLegs().get(1).getRepeatedConditional().getElectronicTicketNumber());
+        assertEquals("0141234567890", parsed.getLegs().get(0).getElectronicTicketNumber());
+        assertEquals("0140987654321", parsed.getLegs().get(1).getElectronicTicketNumber());
     }
 
     @Test
