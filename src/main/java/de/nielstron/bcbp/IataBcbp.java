@@ -48,7 +48,7 @@ public final class IataBcbp {
         }
         String passengerName = prettyPassengerName(passengerNameRaw);
 
-        String ticketIndicator = trimToEmpty(cursor.read(1));
+        String ticketIndicator = trimToNull(cursor.read(1));
 
         List<Leg> legs = new ArrayList<>();
         String versionIndicator = null;
@@ -69,7 +69,7 @@ public final class IataBcbp {
             Cursor conditionalCursor = new Cursor(conditionalPayload);
 
             if (legIndex == 0 && mandatory.getConditionalSize() > 0) {
-                versionIndicator = trimEndToEmpty(conditionalCursor.read(1));
+                versionIndicator = trimEndToNull(conditionalCursor.read(1));
                 versionNumber = toInt(trimToNull(conditionalCursor.read(1)));
                 Integer uniqueSize = conditionalCursor.readHex();
                 if (uniqueSize != null) {
@@ -113,16 +113,16 @@ public final class IataBcbp {
     }
 
     private static Leg parseMandatoryLeg(Cursor cursor) {
-        String pnr = trimToEmpty(cursor.read(7));
+        String pnr = trimToNull(cursor.read(7));
         String from = trimToEmpty(cursor.read(3));
         String to = trimToEmpty(cursor.read(3));
         String carrier = trimToEmpty(cursor.read(3));
         String flight = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(5)));
         Integer dayOfYear = toInt(trimToNull(cursor.read(3)));
-        String compartment = trimToEmpty(cursor.read(1));
+        String compartment = trimToNull(cursor.read(1));
         String seat = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(4)));
         String checkIn = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(5)));
-        String passengerStatus = trimToEmpty(cursor.read(1));
+        String passengerStatus = trimToNull(cursor.read(1));
         Integer conditionalSize = cursor.readHex();
 
         if (conditionalSize == null) {
@@ -134,7 +134,7 @@ public final class IataBcbp {
         if (carrier.length() < 2 || carrier.length() > 3) {
             return null;
         }
-        if (flight.isBlank()) {
+        if (flight == null || flight.isBlank()) {
             return null;
         }
         if (dayOfYear != null && (dayOfYear < 1 || dayOfYear > 366)) {
@@ -248,7 +248,7 @@ public final class IataBcbp {
         }
 
         cursor.read(1);
-        String type = trimToEmpty(cursor.read(1));
+        String type = trimToNull(cursor.read(1));
         Integer length = cursor.readHex();
         if (length == null) {
             return null;
@@ -259,7 +259,7 @@ public final class IataBcbp {
             return null;
         }
 
-        return new SecurityData(type, trimEndToEmpty(data));
+        return new SecurityData(type, trimEndToNull(data));
     }
 
     private static String normalize(String rawMessage) {
@@ -381,7 +381,7 @@ public final class IataBcbp {
     private static String normalizePaddedNumberWithOptionalSuffix(String value) {
         String trimmed = trimToEmpty(value);
         if (trimmed.isBlank()) {
-            return "";
+            return null;
         }
 
         Matcher match = NUMBER_WITH_SUFFIX_PATTERN.matcher(trimmed);
@@ -430,11 +430,12 @@ public final class IataBcbp {
         return trimmed.isBlank() ? null : trimmed;
     }
 
-    private static String trimEndToEmpty(String value) {
+    private static String trimEndToNull(String value) {
         if (value == null) {
-            return "";
+            return null;
         }
-        return value.replaceFirst("\\s+$", "");
+        String trimmed = value.replaceFirst("\\s+$", "");
+        return trimmed.isBlank() ? null : trimmed;
     }
 
     private static String trimStart(String value) {
@@ -581,22 +582,22 @@ public final class IataBcbp {
 
         public String getFromAirport() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getFromAirport() : "";
+            return firstLeg != null ? firstLeg.getFromAirport() : null;
         }
 
         public String getToAirport() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getToAirport() : "";
+            return firstLeg != null ? firstLeg.getToAirport() : null;
         }
 
         public String getCarrierCode() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getOperatingCarrier() : "";
+            return firstLeg != null ? firstLeg.getOperatingCarrier() : null;
         }
 
         public String getFlightNumber() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getFlightNumber() : "";
+            return firstLeg != null ? firstLeg.getFlightNumber() : null;
         }
 
         public LocalDate getFlightDate() {
@@ -606,50 +607,50 @@ public final class IataBcbp {
 
         public String getTravelClass() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getCompartmentCode() : "";
+            return firstLeg != null ? firstLeg.getCompartmentCode() : null;
         }
 
         public String getSeat() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getSeatNumber() : "";
+            return firstLeg != null ? firstLeg.getSeatNumber() : null;
         }
 
         public String getPnr() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getPnrCode() : "";
+            return firstLeg != null ? firstLeg.getPnrCode() : null;
         }
 
         public String getCheckInSequence() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getCheckInSequenceNumber() : "";
+            return firstLeg != null ? firstLeg.getCheckInSequenceNumber() : null;
         }
 
         public String getPassengerStatus() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getPassengerStatus() : "";
+            return firstLeg != null ? firstLeg.getPassengerStatus() : null;
         }
 
         public String flightCode() {
             Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.flightCode() : "";
+            return firstLeg != null ? firstLeg.flightCode() : null;
         }
 
         public String summary() {
-            String route = (getFromAirport().isBlank() || getToAirport().isBlank()) ? "" : getFromAirport() + "->" + getToAirport();
+            String route = (getFromAirport() == null || getToAirport() == null) ? null : getFromAirport() + "->" + getToAirport();
             String flight = flightCode();
-            String seatLabel = getSeat().isBlank() ? "" : "Seat " + getSeat();
+            String seatLabel = getSeat() == null ? null : "Seat " + getSeat();
 
             List<String> parts = new ArrayList<>(3);
-            if (!route.isBlank()) {
+            if (route != null) {
                 parts.add(route);
             }
-            if (!flight.isBlank()) {
+            if (flight != null) {
                 parts.add(flight);
             }
-            if (!seatLabel.isBlank()) {
+            if (seatLabel != null) {
                 parts.add(seatLabel);
             }
-            return String.join(" | ", parts);
+            return parts.isEmpty() ? null : String.join(" | ", parts);
         }
     }
 
@@ -744,6 +745,9 @@ public final class IataBcbp {
         }
 
         public String flightCode() {
+            if (operatingCarrier == null || flightNumber == null) {
+                return null;
+            }
             String normalizedFlight = flightNumber.replaceFirst("^0+", "");
             String number = normalizedFlight.isBlank() ? flightNumber : normalizedFlight;
             return operatingCarrier + number;
