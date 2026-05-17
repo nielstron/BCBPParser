@@ -3,6 +3,7 @@ package de.nielstron.bcbp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ class IataBcbpTest {
         "M2DESMARAIS/LUC       EABC123 YULFRAAC 0834 226F001A0025 14D>6181WW6225BAC 00141234560032A0141234567890 1AC AC 1234567890123    20KYLX58ZDEF456 FRAGVALH 3664 227C012C0002 12E2A0140987654321 1AC AC 1234567890123    2PCNWQ^164GIWVC5EH7JNT684FVNJ91W2QA4DVN5J8K4F0L0GEQ3DF5TGBN8709HKT5D3DW3GBHFCVHMY7J5T6HFR41W2QA4DVN5J8K4F0L0GE";
     private static final String LUFTHANSA_AZTEC_BCBP_WITH_TRAILING_SPACES =
         "M1MUNDLER/NIELS       EX4TE6N ZRHHAMLX 1056 049Y030F0117 377>8320 W    BLX                                        2A72463496679170 LX LH 992221992624215     Y*30600000K09  LHS    ";
+    private static final String ITA_BCBP_WITH_ELECTRONIC_TICKET =
+        "M1MUENDLER/NIELS      E95X63P FCOZRHAZ 0572 119Y014F0008 377>8320OO6118BAZ                                        2A05560252835540 AZ LH 992003891777470     N*30600000K09         ";
 
     @Test
     void recognizesValidBcbpPayloads() {
@@ -43,6 +46,7 @@ class IataBcbpTest {
         assertEquals("1A", parsed.getSeat());
         assertEquals("ABC123", parsed.getPnr());
         assertEquals("25", parsed.getCheckInSequence());
+        assertNull(parsed.getElectronicTicketNumber());
         assertEquals(1, parsed.getNumberOfLegs());
         assertEquals(">", parsed.getVersionNumberIndicator());
         assertEquals(6, parsed.getVersionNumber());
@@ -63,6 +67,8 @@ class IataBcbpTest {
         assertEquals("1", parsed.getSecurityData().getType());
         assertTrue(parsed.getSecurityData().getData().length() > 40);
         assertEquals("0014123456003", parsed.getUniqueConditional().getBagTagNumbers().get(0));
+        assertEquals("0141234567890", parsed.getElectronicTicketNumber());
+        assertEquals("0140987654321", parsed.getLegs().get(1).getRepeatedConditional().getElectronicTicketNumber());
     }
 
     @Test
@@ -74,5 +80,14 @@ class IataBcbpTest {
         assertEquals("ZRH", parsed.getFromAirport());
         assertEquals("HAM", parsed.getToAirport());
         assertEquals("LX1056", parsed.flightCode());
+        assertEquals("7246349667917", parsed.getElectronicTicketNumber());
+    }
+
+    @Test
+    void extractsElectronicTicketNumberFromRepeatedConditionalFields() {
+        IataBcbp.Parsed parsed = IataBcbp.parse(ITA_BCBP_WITH_ELECTRONIC_TICKET);
+        assertNotNull(parsed);
+        assertEquals("AZ572", parsed.flightCode());
+        assertEquals("0556025283554", parsed.getElectronicTicketNumber());
     }
 }

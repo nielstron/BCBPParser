@@ -629,6 +629,14 @@ public final class IataBcbp {
             return firstLeg != null ? firstLeg.getPassengerStatus() : "";
         }
 
+        public String getElectronicTicketNumber() {
+            Leg firstLeg = getFirstLeg();
+            if (firstLeg == null || firstLeg.getRepeatedConditional() == null) {
+                return null;
+            }
+            return firstLeg.getRepeatedConditional().getElectronicTicketNumber();
+        }
+
         public String flightCode() {
             Leg firstLeg = getFirstLeg();
             return firstLeg != null ? firstLeg.flightCode() : "";
@@ -885,6 +893,13 @@ public final class IataBcbp {
 
         public String getDocumentSerialNumber() {
             return documentSerialNumber;
+        }
+
+        public String getElectronicTicketNumber() {
+            if (airlineNumericCode == null || documentSerialNumber == null) {
+                return null;
+            }
+            return airlineNumericCode + documentSerialNumber;
         }
 
         public String getSelecteeIndicator() {
