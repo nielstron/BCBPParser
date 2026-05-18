@@ -1,6 +1,7 @@
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
 plugins {
+    kotlin("jvm") version "2.2.21"
     `java-library`
     `maven-publish`
 }
@@ -27,6 +28,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 tasks.javadoc {

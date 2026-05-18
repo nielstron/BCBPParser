@@ -2,7 +2,7 @@
 [![JitPack](https://jitpack.io/v/nielstron/BCBPParser.svg)](https://jitpack.io/#nielstron/BCBPParser)
 [![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-available-181717?logo=github)](https://github.com/nielstron/BCBPParser/packages)
 
-Parser for IATA Bar Coded Boarding Pass (BCBP) payloads, written in Java.
+Parser for IATA Bar Coded Boarding Pass (BCBP) payloads, written in Kotlin.
 
 Implements the structured data message defined by IATA Resolution 792 for Bar Coded Boarding
 Passes, using IATA's public [BCBP Implementation Guide, 7th edition](https://www.iata.org/contentassets/1dccc9ed041b4f3bbdcf8ee8682e75c4/2021_03_02-bcbp-implementation-guide-version-7-.pdf)
@@ -11,38 +11,31 @@ update for field 15.
 
 ## Usage
 
-```java
-import de.nielstron.bcbp.IataBcbp;
+```kotlin
+import de.nielstron.bcbp.IataBcbp
 
-String raw = "M1DESMARAIS/LUC       EABC123 YULFRAAC 0834 226F001A0025 106>60000";
+val raw = "M1DESMARAIS/LUC       EABC123 YULFRAAC 0834 226F001A0025 106>60000"
 
 // parse(...) returns null for invalid/non-BCBP payloads.
-IataBcbp.Parsed pass = IataBcbp.parse(raw);
-if (pass == null) {
-    return;
-}
+val pass = IataBcbp.parse(raw) ?: return
 
 // First-leg convenience accessors for single-leg UX.
-System.out.println(pass.getPassengerName()); // Luc Desmarais
-System.out.println(pass.flightCode());       // AC834
-System.out.println(pass.getFromAirport());   // YUL
-System.out.println(pass.getToAirport());     // FRA
-System.out.println(pass.getSeat());          // 1A
-System.out.println(pass.summary());          // YUL->FRA | AC834 | Seat 1A
+println(pass.passengerName) // Luc Desmarais
+println(pass.flightCode)    // AC834
+println(pass.fromAirport)   // YUL
+println(pass.toAirport)     // FRA
+println(pass.seat)          // 1A
+println(pass.summary)       // YUL->FRA | AC834 | Seat 1A
 ```
 
 ### Multi-Leg Data
 
-```java
-IataBcbp.Parsed pass = IataBcbp.parse(raw);
+```kotlin
+val pass = IataBcbp.parse(raw)
 if (pass != null) {
-    System.out.println("Legs: " + pass.getNumberOfLegs());
-    for (IataBcbp.Leg leg : pass.getLegs()) {
-        System.out.println(
-            leg.getFromAirport() + " -> " + leg.getToAirport() +
-            " " + leg.flightCode() +
-            " seat " + leg.getSeatNumber()
-        );
+    println("Legs: ${pass.numberOfLegs}")
+    for (leg in pass.legs) {
+        println("${leg.fromAirport} -> ${leg.toAirport} ${leg.flightCode} seat ${leg.seatNumber}")
     }
 }
 ```
@@ -51,18 +44,18 @@ if (pass != null) {
 
 `UniqueConditional`, `RepeatedConditional`, and `SecurityData` are optional and may be `null`.
 
-```java
-IataBcbp.Parsed pass = IataBcbp.parse(raw);
-if (pass != null && pass.getSecurityData() != null) {
-    System.out.println(pass.getSecurityData().getType());
-    System.out.println(pass.getSecurityData().getData());
+```kotlin
+val pass = IataBcbp.parse(raw)
+if (pass?.securityData != null) {
+    println(pass.securityData.type)
+    println(pass.securityData.data)
 }
 ```
 
 ### Notes
 
 - Symbology prefixes like `]Q3` are accepted.
-- `UniqueConditional.getGenderCode()` exposes Resolution 792 field 15, including the version 8
+- `UniqueConditional.genderCode` exposes Resolution 792 field 15, including the version 8
   `X` and `U` values.
 
 ## Dependency
