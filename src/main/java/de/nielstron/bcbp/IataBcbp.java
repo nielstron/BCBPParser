@@ -651,9 +651,9 @@ public final class IataBcbp {
             return firstLeg != null ? firstLeg.getPassengerStatus() : "";
         }
 
-        public String getElectronicTicketNumber() {
-            Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getElectronicTicketNumber() : null;
+        public String getElectronicTicketNumber(int legNumber) {
+            Leg leg = legs.get(legNumber);
+            return leg.getElectronicTicketNumber();
         }
 
         public String flightCode() {

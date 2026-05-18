@@ -69,7 +69,7 @@ class IataBcbpTest {
         assertEquals("1A", parsed.getSeat());
         assertEquals("ABC123", parsed.getPnr());
         assertEquals("25", parsed.getCheckInSequence());
-        assertNull(parsed.getElectronicTicketNumber());
+        assertNull(parsed.getElectronicTicketNumber(0));
         assertEquals(1, parsed.getNumberOfLegs());
         assertEquals(">", parsed.getVersionNumberIndicator());
         assertEquals(6, parsed.getVersionNumber());
@@ -90,7 +90,7 @@ class IataBcbpTest {
         assertEquals("1", parsed.getSecurityData().getType());
         assertTrue(parsed.getSecurityData().getData().length() > 40);
         assertEquals("0014123456003", parsed.getUniqueConditional().getBagTagNumbers().get(0));
-        assertEquals("0141234567890", parsed.getElectronicTicketNumber());
+        assertEquals("0141234567890", parsed.getElectronicTicketNumber(0));
         assertEquals("0141234567890", parsed.getLegs().get(0).getElectronicTicketNumber());
         assertEquals("0140987654321", parsed.getLegs().get(1).getElectronicTicketNumber());
     }
@@ -104,7 +104,7 @@ class IataBcbpTest {
         assertEquals("ZRH", parsed.getFromAirport());
         assertEquals("HAM", parsed.getToAirport());
         assertEquals("LX1056", parsed.flightCode());
-        assertEquals("7246349667917", parsed.getElectronicTicketNumber());
+        assertEquals("7246349667917", parsed.getElectronicTicketNumber(0));
     }
 
     @Test
@@ -112,6 +112,6 @@ class IataBcbpTest {
         IataBcbp.Parsed parsed = IataBcbp.parse(ITA_BCBP_WITH_ELECTRONIC_TICKET);
         assertNotNull(parsed);
         assertEquals("AZ572", parsed.flightCode());
-        assertEquals("0556025283554", parsed.getElectronicTicketNumber());
+        assertEquals("0556025283554", parsed.getElectronicTicketNumber(0));
     }
 }
