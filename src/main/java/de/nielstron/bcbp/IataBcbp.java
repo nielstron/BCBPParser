@@ -846,6 +846,10 @@ public final class IataBcbp {
             return passengerDescription;
         }
 
+        public String getGenderCode() {
+            return passengerDescription;
+        }
+
         public String getCheckInSource() {
             return checkInSource;
         }

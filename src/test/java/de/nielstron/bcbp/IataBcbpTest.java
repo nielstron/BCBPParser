@@ -114,4 +114,39 @@ class IataBcbpTest {
         assertEquals("AZ572", parsed.flightCode());
         assertEquals("0556025283554", parsed.getElectronicTicketNumber());
     }
+
+    @Test
+    void exposesResolution792Version8GenderCodes() {
+        IataBcbp.Parsed unspecified = IataBcbp.parse(minimalBcbpWithGenderCode("X"));
+        IataBcbp.Parsed undisclosed = IataBcbp.parse(minimalBcbpWithGenderCode("U"));
+
+        assertNotNull(unspecified);
+        assertNotNull(undisclosed);
+        assertEquals(8, unspecified.getVersionNumber());
+        assertEquals("X", unspecified.getUniqueConditional().getGenderCode());
+        assertEquals("U", undisclosed.getUniqueConditional().getGenderCode());
+    }
+
+    private static String minimalBcbpWithGenderCode(String genderCode) {
+        return "M1" +
+            fixed("DOE/JOHN", 20) +
+            "E" +
+            fixed("ABC123", 7) +
+            "SFO" +
+            "JFK" +
+            fixed("UA", 3) +
+            fixed("42", 5) +
+            "123" +
+            "Y" +
+            fixed("12A", 4) +
+            fixed("1", 5) +
+            "1" +
+            "05" +
+            ">801" +
+            genderCode;
+    }
+
+    private static String fixed(String value, int length) {
+        return String.format("%-" + length + "s", value);
+    }
 }
