@@ -4,6 +4,11 @@
 
 Parser for IATA Bar Coded Boarding Pass (BCBP) payloads, written in Java.
 
+Implements the structured data message defined by IATA Resolution 792 for Bar Coded Boarding
+Passes, using IATA's public [BCBP Implementation Guide, 7th edition](https://www.iata.org/contentassets/1dccc9ed041b4f3bbdcf8ee8682e75c4/2021_03_02-bcbp-implementation-guide-version-7-.pdf)
+as the main reference. The parser also supports the public Resolution 792 version 8 gender-code
+update for field 15.
+
 ## Usage
 
 ```java
@@ -57,6 +62,8 @@ if (pass != null && pass.getSecurityData() != null) {
 ### Notes
 
 - Symbology prefixes like `]Q3` are accepted.
+- `UniqueConditional.getGenderCode()` exposes Resolution 792 field 15, including the version 8
+  `X` and `U` values.
 
 ## Dependency
 

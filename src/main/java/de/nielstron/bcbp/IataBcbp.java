@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public final class IataBcbp {
 
     private static final int HEADER_LENGTH = 23;
-    private static final int LEG_MANDATORY_LENGTH = 37;
+    private static final int LEG_MANDATORY_MIN_LENGTH = 24;
 
     private static final Pattern NUMBER_WITH_SUFFIX_PATTERN = Pattern.compile("^(0*)(\\d+)([A-Z]?)$");
 
@@ -26,7 +26,7 @@ public final class IataBcbp {
         }
 
         String message = normalize(rawMessage);
-        if (message.length() < HEADER_LENGTH + LEG_MANDATORY_LENGTH) {
+        if (message.length() < HEADER_LENGTH + LEG_MANDATORY_MIN_LENGTH) {
             return null;
         }
 
@@ -113,17 +113,17 @@ public final class IataBcbp {
     }
 
     private static Leg parseMandatoryLeg(Cursor cursor) {
-        String pnr = trimToNull(cursor.read(7));
-        String from = trimToEmpty(cursor.read(3));
-        String to = trimToEmpty(cursor.read(3));
-        String carrier = trimToEmpty(cursor.read(3));
-        String flight = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(5)));
-        Integer dayOfYear = toInt(trimToNull(cursor.read(3)));
-        String compartment = trimToNull(cursor.read(1));
-        String seat = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(4)));
-        String checkIn = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.read(5)));
-        String passengerStatus = trimToNull(cursor.read(1));
-        Integer conditionalSize = cursor.readHex();
+        String pnr = trimToNull(cursor.readPadded(7));
+        String from = trimToEmpty(cursor.readPadded(3));
+        String to = trimToEmpty(cursor.readPadded(3));
+        String carrier = trimToEmpty(cursor.readPadded(3));
+        String flight = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.readPadded(5)));
+        Integer dayOfYear = toInt(trimToNull(cursor.readPadded(3)));
+        String compartment = trimToNull(cursor.readPadded(1));
+        String seat = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.readPadded(4)));
+        String checkIn = normalizePaddedNumberWithOptionalSuffix(trimToNull(cursor.readPadded(5)));
+        String passengerStatus = trimToNull(cursor.readPadded(1));
+        Integer conditionalSize = cursor.readHexPadded();
 
         if (conditionalSize == null) {
             return null;
@@ -467,11 +467,33 @@ public final class IataBcbp {
             return value;
         }
 
+        String readPadded(int length) {
+            if (length < 0 || index > raw.length()) {
+                return null;
+            }
+            int end = Math.min(index + length, raw.length());
+            String value = raw.substring(index, end);
+            index = end;
+            return value + " ".repeat(length - value.length());
+        }
+
         Integer readHex() {
             String value = read(2);
             if (value == null) {
                 return null;
             }
+            return parseHex(value);
+        }
+
+        Integer readHexPadded() {
+            String value = readPadded(2);
+            if (value == null) {
+                return null;
+            }
+            return parseHex(value);
+        }
+
+        private Integer parseHex(String value) {
             String trimmed = value.trim();
             if (trimmed.isBlank()) {
                 trimmed = "0";
@@ -630,9 +652,9 @@ public final class IataBcbp {
             return firstLeg != null ? firstLeg.getPassengerStatus() : null;
         }
 
-        public String getElectronicTicketNumber() {
-            Leg firstLeg = getFirstLeg();
-            return firstLeg != null ? firstLeg.getElectronicTicketNumber() : null;
+        public String getElectronicTicketNumber(int legNumber) {
+            Leg leg = legs.get(legNumber);
+            return leg.getElectronicTicketNumber();
         }
 
         public String flightCode() {
@@ -825,6 +847,10 @@ public final class IataBcbp {
         }
 
         public String getPassengerDescription() {
+            return passengerDescription;
+        }
+
+        public String getGenderCode() {
             return passengerDescription;
         }
 
