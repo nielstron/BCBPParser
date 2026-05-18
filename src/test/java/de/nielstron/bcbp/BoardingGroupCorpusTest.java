@@ -94,7 +94,7 @@ class BoardingGroupCorpusTest {
             "KItinerary minimal sample",
             "M1DOE/JOHN            EXXX007 TXLBRUSN 2592 110Y",
             "SN",
-            "",
+            null,
             null,
             null
         ),
@@ -102,7 +102,7 @@ class BoardingGroupCorpusTest {
             "KItinerary minimal sample without compartment",
             "M1DOE/JOHN            EXXX007 TXLBRUSN 2592 110",
             "SN",
-            "",
+            null,
             null,
             null
         ),
