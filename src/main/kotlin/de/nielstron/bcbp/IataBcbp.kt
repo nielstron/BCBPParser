@@ -52,7 +52,7 @@ object IataBcbp {
             val conditionalPayload = cursor.read(mandatory.conditionalSize) ?: return null
             val conditionalCursor = Cursor(conditionalPayload)
 
-            if (legIndex == 0 && mandatory.conditionalSize > 0) {
+            if (legIndex == 0 && mandatory.conditionalSize > 0 && conditionalPayload.startsWith(">")) {
                 versionIndicator = conditionalCursor.read(1).trimEndToNull()
                 versionNumber = conditionalCursor.read(1).trimToNull()?.toIntOrNull()
                 val uniqueSize = conditionalCursor.readHex()
