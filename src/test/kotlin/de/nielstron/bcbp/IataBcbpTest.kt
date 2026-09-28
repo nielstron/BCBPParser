@@ -109,6 +109,11 @@ class IataBcbpTest {
     }
 
     @Test
+    fun recognizesBcbpWithBlankCompartmentAndPaddedFields() {
+        assertNotNull(IataBcbp.parse(BLANK_COMPARTMENT_BCBP))
+    }
+
+    @Test
     fun extractsElectronicTicketNumberFromRepeatedConditionalFields() {
         val parsed = IataBcbp.parse(ITA_BCBP_WITH_ELECTRONIC_TICKET)
         assertNotNull(parsed)
@@ -172,6 +177,22 @@ class IataBcbpTest {
                 "00"
         private const val ITA_BCBP_WITH_ELECTRONIC_TICKET =
             "M1MUENDLER/NIELS      E95X63P FCOZRHAZ 0572 119Y014F0008 377>8320OO6118BAZ                                        2A05560252835540 AZ LH 992003891777470     N*30600000K09         "
+        private val BLANK_COMPARTMENT_BCBP =
+            "M1" +
+                "DOE/JOHN".padEnd(20) +
+                "E" +
+                "ABC1234" +
+                "PRG" +
+                "BSL" +
+                "EJU" +
+                "7572 " +
+                "271" +
+                " " +
+                "13F " +
+                "649  " +
+                "1" +
+                "0A" +
+                "1234567890"
         private val KITINERARY_BCBP_FIXTURES = listOf(
             "M1DOE/JOHN            EABCDEFGMRSLGWEZY8724 99  3C  506  10Axxxxxxxxxx",
             "M1DESMARAIS/LUC       EABC123 YULFRAAC 0834 326J001A0025 100",
